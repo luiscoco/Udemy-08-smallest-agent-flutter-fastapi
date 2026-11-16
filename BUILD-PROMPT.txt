@@ -1,0 +1,77 @@
+You are working in an EMPTY folder. Create a complete runnable educational enterprise-style web application from scratch.
+
+APPLICATION: The Smallest Agent - Lesson 0 - Flutter + FastAPI + Python edition.
+
+Create an independent folder 08-smallest-agent-flutter-fastapi. Preserve earlier editions, environment files and prompts. Save this entire standalone prompt beside the other prompts as Prompt - Create the Enterprise Web Application from Scratch - Flutter FastAPI Python.txt and an identical BUILD-PROMPT.txt inside the project. Never read, display, borrow or copy another edition's real .env or credentials.
+
+STACK AND CORE LOOP
+- Genuine Flutter Web with Dart, Material 3 and reactive widgets; FastAPI/Pydantic with Python 3.11+; actual Python Claude Agent SDK on the backend.
+- query() -> async for -> ResultMessage must remain recognizable in a testable service. No direct REST substitute, browser SDK, Python-less proxy or fabricated live results.
+- Scope is a complete Flutter Web application. Do not claim native mobile/desktop packaging without generating and verifying those targets.
+- Consult official sources first: https://docs.flutter.dev/install, https://docs.flutter.dev/platform-integration/web/setup, https://docs.flutter.dev/ui, https://fastapi.tiangolo.com and https://code.claude.com/docs/en/agent-sdk/python.
+- Verify actual package APIs and compatible versions. Pin direct dependencies and include pubspec.lock. Baseline: Flutter 3.47.9 / Dart 3.13.7; http 1.6.0; flutter_highlight 0.7.0; flutter_markdown_plus 1.0.12; markdown 7.3.1; shared_preferences 2.5.6; url_launcher 6.3.3; web 1.1.2; cupertino_icons 2.0.0. Python baseline: claude-agent-sdk 0.2.179, FastAPI 0.162.2, Uvicorn 0.54.0, Pydantic 2.14.3, pydantic-settings 2.16.2, pytest 9.2.0 and httpx 0.28.1.
+- If Flutter is unavailable, obtain an official temporary SDK for meaningful analysis/test/build where feasible, without changing system PATH. Document the temporary path and a launcher override; distinguish verified work from unavailable checks.
+
+STRUCTURE AND WINDOWS LAUNCHERS
+- Root README.md, ASSETS.md, VERIFICATION.md, BUILD-PROMPT.txt, pytest.ini, .gitignore, Start-Backend.ps1 and Start-Frontend.ps1.
+- backend contains requirements.txt, .env.example, run.py, app/main.py, app/config.py, app/schemas.py, app/agent_service.py and meaningful tests.
+- frontend contains pubspec.yaml/lock, analysis_options.yaml, web/index.html, lib/main.dart, app.dart, lesson.dart, models.dart, api.dart, code_block.dart, workflow_diagram.dart and web-conditional download helpers; assets and test directories.
+- scripts/generate_lesson.py extracts actual Dart/Python snippets and copies local UML templates to safe frontend assets. No whole-folder copies from earlier editions.
+- Installation from Lesson 0: cd into 08-smallest-agent-flutter-fastapi; python -m venv .venv; use THIS .venv/Scripts/python.exe to install backend/requirements.txt. Flutter dependencies install from frontend with flutter pub get. Node/npm, .NET and other editions' virtual environments are unnecessary.
+- Exact PowerShell commands must identify the working directory. Root helpers resolve PSScriptRoot to avoid wrong-folder and missing-interpreter failures. The frontend helper supports -FlutterPath for an absolute flutter.bat.
+- Development: FastAPI at 127.0.0.1:8300; Flutter web-server device at 127.0.0.1:4900; public --dart-define=API_BASE_URL=http://127.0.0.1:8300. This define is only a public address and never contains credentials. User opens the printed browser URL manually.
+- Explicit CORS permits only http://127.0.0.1:4900 and http://localhost:4900; no wildcard origins/credentials. Same-origin production requests are also accepted. Check Origin before SDK work and never trust arbitrary forwarded headers.
+- Production: flutter build web with no development API_BASE_URL define, preferably --no-web-resources-cdn to bundle renderer resources; restart FastAPI to serve frontend/build/web and API together on port 8300. Mount static files after API/docs so unknown API routes stay 404.
+- Windows Python launch uses a Proactor event loop for SDK subprocess support; no incompatible reload worker loop. Ctrl+C stops each owned server.
+
+VISUAL STYLE: PRESERVE EVERY PRIOR USER REQUEST
+Reference: https://github.com/luiscoco/Udemy-Claude-Agent-SDK-lesson01-app
+- Large readable typography: about 21 px body, at least 16 px secondary text and 18 px code, clear headings and generous line height.
+- Pastel blue prompt, lilac inspector, mint answer and alternating peach/mint/lilac/blue teaching cards. Blue/orange accents, rounded cards, fine borders and spacious layout.
+- Persistent accessible light/dark theme with unavailable-storage fallback. Use theme-aware native Material surfaces so expansion tiles and ink effects remain visible inside colored cards.
+- Responsive desktop columns and mobile stacking; no horizontal page overflow. Large touch targets, visible focus, native labels, selected-tab semantics, keyboard submission and selectable content.
+- Reuse the known safe local course astronaut with alt/semantic text and provenance. Never copy credentials or other applications' environment files.
+- Every teaching snippet and answer fence must be syntax-colored, indented and scrollable. Include Dart, Python, PowerShell, JSON and .env languages; unknown code remains escaped/plain text.
+- Render Markdown as Flutter widgets rather than executing raw HTML/JavaScript. Suppress remote answer images and restrict links to HTTP(S). Use custom fenced-code builders for highlighting.
+
+FIVE COMPLETE TEACHING SECTIONS
+1. Application lab: course header, stack badges, server/key-presence status, docs link, theme control, hero and astronaut; three-step introduction; Hello world! default, trimmed prompt counter/limit 4000 and examples; Stream/Simple modes; Run agent and Ctrl+Enter; immediate duplicate-submit lock, disabled busy input and elapsed indicator; real answer, turns, SDK duration and estimated USD cost (null means Not reported); copy with feedback/fallback and actual Markdown download; bounded timestamped safe SDK event timeline with badges and expandable colored JSON; idle/loading/success/error states, readable safe error and snackbar; retry and cleanup. Never preload a fabricated live answer.
+2. What you will learn: at least six meaningful cards on the minimal loop, Flutter reactivity, FastAPI/Python service boundaries, private configuration, SDK messages versus tokens, tool isolation and safe rendering; useful next-section controls.
+3. How to run: exact Windows installation, guarded backend/.env copy/edit, own interpreter, Flutter setup and both terminals/ports; launcher path override for a temporary SDK; key/model/system prompt/max turns/precedence/restarts; health presence versus authenticated readiness; analyze/test/generate/build/production instructions. No npm ENOENT or unrelated .venv commands.
+4. Architecture & workflow: Flutter widget -> Dart HTTP client -> FastAPI input boundary/route -> Python service -> SDK/CLI -> Claude. Real UML sequence diagram, five lifelines, calls/returns, repeated-message loop and success/provider/input alternatives. Native Flutter rendering with pan/zoom plus downloadable local SVG and editable PlantUML; no hosted rendering dependency.
+5. Code walkthrough: at least five actual colored source excerpts covering input, validation/delegation, SDK loop/result and safe presentation. Include real filenames, omitted-context notes and useful explanations. No unrelated-stack examples or pseudocode presented as live source.
+
+UML: 16 MATCHING SOURCE CARDS
+- Exactly 16 interactions: submit prompt; JSON POST; validation/options; server delegation; SDK/model boundary; response observation; safe projection; SSE frame; Flutter state update; normalized metrics; final-result dispatch; safe answer/metrics; done enforcement; error without done; UI error/snackbar; missing-key/input rejection before SDK execution.
+- EACH arrow has its own pastel card, matching number/title, actual Dart/Python filename, colored excerpt and plain explanation relating that source to the arrow.
+- Generator extracts actual source by stable markers, validates all 16 unique sequential SVG labels, fails on missing markers/mismatches and deterministically writes workflow.json plus SVG/PlantUML assets.
+- Native diagram uses the same generated labels. Do not pretend the app implements the model HTTP exchange; it is inside the SDK. Public projections and transport boundaries should be clear.
+
+NAVIGATION REGRESSION
+- Every lesson tab must change content and selected state on the same mounted application, including revisits. Preserve lab prompt/result across sections.
+- Keep state per app instance; no global mutable request store. Test actual tab clicks for all five sections, headings, selected semantics, all 16 architecture cards and retained prompt on return. Independent page loads do not prove interactive navigation.
+
+API, PRIVACY AND EXECUTION
+- GET /api/health returns status and api_key_configured only. POST /api/agent/query returns result, num_turns, duration_ms, total_cost_usd and is_error. POST /api/agent/stream emits message/error/done SSE. Provide real Swagger at /docs and generated /openapi.json.
+- Strict Pydantic prompt string, trimmed 1-4000, extra fields rejected. ASGI middleware bounds actual incoming bytes at 32 KiB before JSON parsing, including chunked bodies. Safe details: 400 malformed JSON, 403 foreign origin, 413 oversized body, 415 wrong type, 422 invalid prompt. No submitted-value echo or raw provider traces.
+- Missing key returns query 503 or SSE error without done; provider query failure returns safe 502. No SDK calls for invalid input/missing credentials.
+- Native FastAPI SSE with heartbeat comments, three-minute deadline and disconnect cancellation; close SDK iterators with aclosing and cancel query tasks on disconnect. Server timers/iterators and Flutter timers/HTTP clients close on completion/disposal.
+- Require final result before done; non-success SDK subtype stays failure even if is_error=false. Done never overrides an error result.
+- SDK options: tools=[], allowed_tools=[], permission_mode=dontAsk, empty settings/skills/MCP/plugins, strict MCP, bounded turns and no session persistence through the supported CLI option. Clearing allowed_tools alone is not a tool ban. Disable remote Claude.ai MCP for this run.
+- Supply this app's secret to SDK subprocess options without mutating process-wide credentials. Project safe text/subtype/final metrics only; exclude thinking, environment, tool arguments, raw SDK objects, paths and session IDs. Redact exact key occurrences before summary truncation. Error result subtypes use a safe generic answer.
+- Dart public contracts import no backend or SDK code. Runtime-validate results/messages. HTTP/SSE client supports split UTF-8, CRLF, comments, partial/multiple frames and multiline data; requires result plus done, propagates specific safe errors and closes owned clients when finished/canceled. Heartbeat bytes must reset transport inactivity detection even when no message event arrives.
+
+PRIVATE ENV EXAMPLE
+ANTHROPIC_API_KEY=sk-ant-replace-with-your-key
+CLAUDE_MODEL=
+AGENT_SYSTEM_PROMPT=
+AGENT_MAX_TURNS=1
+
+Create only backend/.env.example. SecretStr and a module-relative own .env keep secrets private; environment overrides file. Placeholder counts as missing. Turns accept 1-10, default one. Never create/copy real keys. Ignore env variants except example, .venv, caches and build outputs. User authentication/quotas/history/native platforms/tool-enabled operation/public deployment are future extensions, not fabricated features.
+
+VERIFICATION AND DELIVERY
+- flutter analyze with strict inference/casts and no errors/warnings; meaningful Dart HTTP/SSE and Flutter widget tests; meaningful Python backend tests; actual flutter build web.
+- Cover both response modes, validation, redaction/projection, locked SDK options, failures/missing result, error subtype, cancellation/disconnect, explicit CORS, duplicate submission, theme persistence, all-tab reuse, all 16 source cards, highlighted answer code and narrow layout without overflow.
+- Start only owned dev/production servers, test real health/docs/schema/assets/API, browser missing-key responses and cross-origin development. When browser tooling is available, inspect the actual desktop/mobile interface and tab behavior; report limits honestly.
+- Verify deterministic source generation, five diagram lifelines, 16 labels, identical prompt copies and no real credential copy. Do not claim successful live Claude authentication/inference unless tested with an authorized key. Tests should spend no credits.
+- README includes exact commands and URLs; ASSETS records provenance; VERIFICATION records actual checks and limitations. Final response gives the new folder, matching prompt and simple Windows launch/configuration commands.

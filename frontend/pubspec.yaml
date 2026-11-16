@@ -1,0 +1,24 @@
+name: smallest_agent_flutter
+description: The Smallest Agent lesson lab with Flutter Web and a Python FastAPI backend.
+publish_to: none
+version: 1.0.0+1
+environment:
+  sdk: '>=3.9.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  http: 1.6.0
+  flutter_highlight: 0.7.0
+  flutter_markdown_plus: 1.0.12
+  markdown: 7.3.1
+  shared_preferences: 2.5.6
+  url_launcher: 6.3.3
+  web: 1.1.2
+  cupertino_icons: 2.0.0
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/

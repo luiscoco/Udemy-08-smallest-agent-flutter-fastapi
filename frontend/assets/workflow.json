@@ -1,0 +1,146 @@
+[
+  {
+    "number": 1,
+    "title": "Run agent (prompt)",
+    "source": "frontend/lib/app.dart",
+    "language": "dart",
+    "code": "final trimmed = prompt.text.trim();\nif (busy || trimmed.isEmpty || trimmed.length > 4000) return;\nbusy = true;\nsetState(() {\n  status = 'running';",
+    "text": "The Flutter action trims input and applies a synchronous duplicate-submit lock.",
+    "explanation": "The server validates independently. The lock applies before awaiting any network operation."
+  },
+  {
+    "number": 2,
+    "title": "POST /api/agent/stream",
+    "source": "frontend/lib/api.dart",
+    "language": "dart",
+    "code": "final request = http.Request('POST', endpoint('/api/agent/stream'))\n  ..headers['Content-Type'] = 'application/json'\n  ..body = jsonEncode({'prompt': prompt});\nfinal response = await client",
+    "text": "The Dart client posts a JSON prompt to the stream endpoint.",
+    "explanation": "Production uses same-origin URLs. Development explicitly points to FastAPI on port 8300, which allows only the two local frontend origins."
+  },
+  {
+    "number": 3,
+    "title": "Validate; tools disabled",
+    "source": "backend/app/schemas.py",
+    "language": "python",
+    "code": "class PromptRequest(BaseModel):\n    model_config = ConfigDict(str_strip_whitespace=True, extra='forbid')\n    prompt: str = Field(min_length=1, max_length=4000, strict=True)",
+    "text": "A strict Pydantic model trims the string and checks its bounds.",
+    "explanation": "The ASGI boundary first checks actual bytes, Origin and content type. SDK options separately disable built-in tools."
+  },
+  {
+    "number": 4,
+    "title": "stream_agent() / query()",
+    "source": "backend/app/main.py",
+    "language": "python",
+    "code": "async with aclosing(agent.stream_agent(body.prompt)) as messages:\n    async for message in messages:\n        yield ServerSentEvent(event='message', data=message)\nyield ServerSentEvent(event='done', data={'status': 'complete'})",
+    "text": "FastAPI delegates execution to the Python agent service.",
+    "explanation": "The server owns configuration and credentials. The generator scope closes the SDK iterator on completion or cancellation."
+  },
+  {
+    "number": 5,
+    "title": "Prompt; no built-in tools",
+    "source": "backend/app/agent_service.py",
+    "language": "python",
+    "code": "source = self.query_fn(prompt=prompt, options=self.agent_options())\nasync with aclosing(source):\n    async for message in source:\n        if isinstance(message, ResultMessage):\n            return self.result_data(message)",
+    "text": "The actual SDK query boundary owns the CLI runtime and model transport.",
+    "explanation": "Application code supplies a prompt/options and observes SDK messages. The model HTTP exchange itself is internal to the SDK."
+  },
+  {
+    "number": 6,
+    "title": "Model response",
+    "source": "backend/app/agent_service.py",
+    "language": "python",
+    "code": "async for message in source:\n    if isinstance(message, ResultMessage):\n        return self.result_data(message)",
+    "text": "Async iteration observes SDK messages until a final result appears.",
+    "explanation": "The same small loop as the terminal lesson remains recognizable. Streaming projects intermediate messages while query mode returns a final answer."
+  },
+  {
+    "number": 7,
+    "title": "Safe SDK message",
+    "source": "backend/app/agent_service.py",
+    "language": "python",
+    "code": "        yield {'type': kind, 'summary': summary, 'data': data}\nif not found_result:\n    raise RuntimeError('Agent ended without a final result')",
+    "text": "Only allowlisted SDK projections leave the service.",
+    "explanation": "Projection branches above this yield include text, system subtype and final metrics. Thinking, environment, tools and session IDs are excluded."
+  },
+  {
+    "number": 8,
+    "title": "SSE message event",
+    "source": "backend/app/main.py",
+    "language": "python",
+    "code": "        yield ServerSentEvent(event='message', data=message)\nyield ServerSentEvent(event='done', data={'status': 'complete'})",
+    "text": "FastAPI serializes a safe SDK projection into a native SSE frame.",
+    "explanation": "EventSourceResponse handles heartbeat comments and disconnect cancellation. The route applies a three-minute execution deadline."
+  },
+  {
+    "number": 9,
+    "title": "Update typed state",
+    "source": "frontend/lib/app.dart",
+    "language": "dart",
+    "code": "if (messages.length < 500)\n  messages.add(\n    AgentMessage(\n      message.type,\n      message.summary,\n      message.data,\n      clock.elapsedMilliseconds,\n    ),\n  );\nif (message.type == 'ResultMessage') {\n  finalResult = AgentResult.fromJson(message.data);\n  result = finalResult;",
+    "text": "Each received SDK message updates Flutter state.",
+    "explanation": "The visible timeline is bounded. Final-result processing continues after 500 displayed rows. State belongs to this application instance."
+  },
+  {
+    "number": 10,
+    "title": "ResultMessage fields",
+    "source": "backend/app/agent_service.py",
+    "language": "python",
+    "code": "def result_data(self, message: ResultMessage) -> dict:\n    return {\n        'result': self.redact(message.result or '') if message.subtype == 'success' else 'The agent could not complete this prompt. Check the server configuration.',\n        'num_turns': message.num_turns,\n        'duration_ms': message.duration_ms,\n        'total_cost_usd': message.total_cost_usd,\n        'is_error': message.is_error or message.subtype != 'success',\n    }",
+    "text": "Normalize answer, turns, duration, estimated cost and SDK error status.",
+    "explanation": "Exact key occurrences are redacted. Non-success subtypes stay failures; an unreported cost remains null."
+  },
+  {
+    "number": 11,
+    "title": "SSE ResultMessage",
+    "source": "frontend/lib/api.dart",
+    "language": "dart",
+    "code": "  final message = AgentMessage.fromJson(frame.data as Json);\n  if (message.type == 'ResultMessage') foundResult = true;\n  receive(message);\n}",
+    "text": "The Dart client runtime-validates every message and final result.",
+    "explanation": "ResultMessage is a safe public projection. The application receives it in the same SSE message event as progress."
+  },
+  {
+    "number": 12,
+    "title": "Render answer + metrics",
+    "source": "frontend/lib/code_block.dart",
+    "language": "dart",
+    "code": "Widget build(BuildContext context) => MarkdownBody(\n  data: data,\n  selectable: true,\n  builders: {'pre': FencedCodeBuilder()},\n  // Flutter widgets do not execute HTML or scripts. Suppress remote images.\n  imageBuilder: (uri, title, alt) => Text(alt ?? '[Image omitted]'),\n  onTapLink: (text, href, title) {",
+    "text": "Render Markdown and fenced code as Flutter widgets.",
+    "explanation": "No model HTML is inserted into the DOM or executed. Remote answer images are omitted and links are limited to HTTP(S). The pre builder colors fenced code."
+  },
+  {
+    "number": 13,
+    "title": "SSE done event",
+    "source": "frontend/lib/api.dart",
+    "language": "dart",
+    "code": "  if (frame.event == 'done') {\n    done = true;\n    break;\n  }\n}\nif (!foundResult || !done)\n  throw const ApiException(\n    'The stream closed before the agent finished. Please try again.',\n  );",
+    "text": "Require both a final result and the terminal done event.",
+    "explanation": "The parser preserves split UTF-8, CRLF and multiline data. Completing the transport does not override a failed SDK result."
+  },
+  {
+    "number": 14,
+    "title": "SSE error; no done",
+    "source": "backend/app/main.py",
+    "language": "python",
+    "code": "yield ServerSentEvent(event='error', data={'detail': FAILURE})",
+    "text": "A provider failure after SSE starts emits a safe error without done.",
+    "explanation": "Query mode instead returns safe HTTP 502. Raw provider exceptions and submitted values are excluded."
+  },
+  {
+    "number": 15,
+    "title": "Error + snackbar",
+    "source": "frontend/lib/app.dart",
+    "language": "dart",
+    "code": "final message = err is ApiException\n    ? err.message\n    : err is TimeoutException\n    ? 'The agent timed out. Check the connection and try again.'\n    : 'The request failed. Check the server connection and API key.';\nsetState(() {\n  error = message;\n  status = 'error';\n});\nnotify(message);",
+    "text": "Flutter shows the safe API error and a snackbar, then restores controls.",
+    "explanation": "Specific validation/key errors survive the client boundary. Other network failures use a readable fallback; timers stop in finally."
+  },
+  {
+    "number": 16,
+    "title": "Key: SSE error / input: 422",
+    "source": "backend/app/main.py",
+    "language": "python",
+    "code": "yield ServerSentEvent(event='error', data={'detail': MISSING_KEY})\nreturn",
+    "text": "A missing key stops execution before the SDK is called.",
+    "explanation": "Query returns HTTP 503; stream sends error without done. Invalid inputs are rejected before route execution. Neither path spends model credits."
+  }
+]
